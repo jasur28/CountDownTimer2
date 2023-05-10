@@ -4,15 +4,53 @@
 
 <h1>Counter</h1>
 
-<p role="status">Current count: @currentCount</p>
+<input type="text" @bind="@CurrentValue" />
 
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+<p><button @onclick="@(async ()=>{Timer();})">Start</button></p>
+<p><button @onclick="@(()=>{is_running=false;})">Pause</button></p>
+<p><button @onclick="@(()=>{Timer();})">Resume</button></p>
 
-@code {
-    private int currentCount = 0;
+<p>@NewValue</p>
+<p>@displaytext</p>
+<p>@TimerStarted</p>
+<p>@TimerFinished</p>
 
-    private void IncrementCount()
+@code{
+
+    public bool is_running = false;
+    private DateTime TimerStarted;
+    private DateTime TimerFinished;
+    private int CurrentValue { get; set; } = 0;
+    private int NewValue { get; set; } = 0;
+
+    string displaytext = "";
+
+    async Task Timer()
     {
-        currentCount++;
+        TimerStarted = DateTime.Now;
+        NewValue = CurrentValue;
+        is_running = true;
+        while (is_running)
+        {
+            await Task.Delay(1000);
+            if (is_running)
+            {
+                NewValue -= 1;
+                CurrentValue = NewValue;
+                if(NewValue==0)
+                {
+                    is_running = false;
+                    await AfterTime();
+                }
+                StateHasChanged();
+            }
+        }
+    }
+
+    Task AfterTime()
+    {
+        TimerFinished = DateTime.Now;
+        displaytext = "time expired";
+        return Task.CompletedTask;
     }
 }
