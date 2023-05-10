@@ -13,8 +13,8 @@
 
 <p>@NewValue</p>
 <p>@displaytext</p>
-<p>@TimerStarted</p>
-<p>@TimerFinished</p>
+@*<p>@TimerStarted</p>
+<p>@TimerFinished</p>*@
 
 @if (item is null)
 {
@@ -51,6 +51,7 @@ else
     private DateTime TimerStarted;
     private DateTime TimerFinished;
     private int CurrentValue { get; set; } = 0;
+    private int FirstValue { get; set; }=0;
     private int NewValue { get; set; } = 0;
 
     string displaytext = "";
@@ -65,7 +66,8 @@ else
     async Task Timer()
     {
         TimerStarted = DateTime.Now;
-        NewValue = CurrentValue;
+
+        NewValue = CurrentValue-NewValue;
         is_running = true;
         while (is_running)
         {
@@ -73,7 +75,7 @@ else
             if (is_running)
             {
                 NewValue -= 1;
-                CurrentValue = NewValue;
+                //CurrentValue = NewValue;
                 if(NewValue==0)
                 {
                     is_running = false;
@@ -89,7 +91,7 @@ else
         TimerFinished = DateTime.Now;
         displaytext = "time expired";
         TimerEntity item = new TimerEntity();
-        item.TimerStarted = TimerStarted;
+        item.TimerStarted = TimerFinished.AddSeconds(-CurrentValue);
         item.TimerFinished = TimerFinished;
         timerService.InsertTimer(item);
         return Task.CompletedTask;
