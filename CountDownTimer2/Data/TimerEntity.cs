@@ -1,4 +1,4 @@
-﻿namespace CountDownTimer.Data
+﻿namespace CountDownTimer2.Data
 {
     public class TimerEntity
     {

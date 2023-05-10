@@ -1,5 +1,6 @@
 ﻿@page "/counter"
-
+@using CountDownTimer2.Data
+@inject TimerService timerService
 <PageTitle>Counter</PageTitle>
 
 <h1>Counter</h1>
@@ -15,6 +16,35 @@
 <p>@TimerStarted</p>
 <p>@TimerFinished</p>
 
+@if (item is null)
+{
+    <p><em>No data!</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>id</th>
+                <th>Timer Started</th>
+                <th>Timer Finished</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var t in item)
+            {
+                <tr>
+                    <td>@t.Id</td>
+                    <td>@t.TimerStarted</td>
+                    <td>@t.TimerFinished</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
 @code{
 
     public bool is_running = false;
@@ -24,6 +54,13 @@
     private int NewValue { get; set; } = 0;
 
     string displaytext = "";
+
+    List<TimerEntity> item;
+    protected override async Task OnInitializedAsync()
+    {
+        item = await Task.Run(() => timerService.GetAllTimerEntitiesAsync());
+    }
+
 
     async Task Timer()
     {
@@ -51,6 +88,10 @@
     {
         TimerFinished = DateTime.Now;
         displaytext = "time expired";
+        TimerEntity item = new TimerEntity();
+        item.TimerStarted = TimerStarted;
+        item.TimerFinished = TimerFinished;
+        timerService.InsertTimer(item);
         return Task.CompletedTask;
     }
 }

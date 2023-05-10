@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography.X509Certificates;
 
-namespace CountDownTimer.Data
+namespace CountDownTimer2.Data
 {
     public class TimerDbContext : DbContext
     {
